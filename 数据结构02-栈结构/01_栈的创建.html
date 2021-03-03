@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script>
+      /**
+    1.栈的英文单词stack
+    2.压栈一般是push操作
+    3.出栈一般是pop操作
+    4.^栈的相关操作
+    添加方法有两种方式
+    1.this.方法，在对象里面一般称之为方法methods，反之function函数
+    2.利用原型Stack.prototype共享一个方法
+    3.js如何基于对象来实现面向对象的特性
+
+    */2.0011
+      // 栈类====封装栈的类
+      function Stack() {
+        // 栈中的属性
+         this.items = [];
+
+        // 栈相关的方法
+        // 压栈操作：把某个元素压入栈，必须先初始化items
+        this.push = function (element) {
+            this.items.push(element);
+        };
+        Stack.prototype.pop = function (e) {
+          return this.items.pop();
+        };
+        // 出栈操作
+        // this.pop = function () {
+        //     return items.pop()
+        // }
+
+        // peek操作------->查看栈顶元素，不会做任何修改
+        this.peek = function () {
+          return this.items[this.items.length - 1];
+        };
+
+        // 判断栈中的元素是否为空
+        this.isEmpty = function () {
+          return this.items.length == 0;
+        };
+
+        // 获取栈中当前元素的个数
+        this.size = function () {
+          return this.items.length;
+        };
+        Stack.prototype.toString = function () {
+          return this.items.join('');
+        };
+      }
+
+      //    // 模拟面试题
+         var stack = new Stack()
+      
+    //      // 情况下代码模拟
+    //      stack.push(6)  //6
+    //      stack.push(5)
+    //     //  stack.pop()     // 5
+    //     //  stack.push(4)
+    //     //  stack.pop()     // 4
+    //     //  stack.push(3)
+    //     //  stack.pop()     // 3
+    //     //  stack.pop()     // 6
+    //     //  stack.push(2)
+    //     //  stack.push(1)
+    //     //  stack.pop()     // 1
+    //     //  stack.pop()     // 2
+    //      alert(stack)
+    //      alert(stack.isEmpty())
+    //      alert(stack.size())
+    //      alert(stack.toString())
+
+      // 机器语言:封装十进制转二进制的函数
+      // decimal
+      // binary
+      //算法:100十进制转成二进制，首先计算100除以2余数多少，100除以2的整数结果除以2余数，循环往复100除以2的整数结果除以2整数结果...把余数除以1，现在你要做的事情从后前按序排列，计算器验证
+      //封装对应的函数
+      //功能：传入十进制，返回二进制
+      //逻辑：把余数不断压入栈，从后往前一次拿出来，这样才是正确的二进制形式
+      //
+      function dec2bin(decNumer) {
+        // 定义变量
+        var stack = new Stack();
+        var remainder;
+
+        // 循环除法
+        while (decNumer > 0) {
+          // 100余20 的结果放入栈
+          // 100除以20 的整除结果用于下一次计算，所以会进行循环操作
+          // 当你大于0继续循环，小于0终止循环，不确定次数的情况下用while循环
+          // 
+          remainder = decNumer % 2;
+          decNumer = Math.floor(decNumer / 2);
+          stack.push(remainder);
+        }
+
+        // 从栈中将数据取出，用个字符串
+        var binayriStrng = "";
+        while (!stack.isEmpty()) {
+
+          binayriStrng += stack.pop();
+        }
+        return binayriStrng;
+      }
+
+      // 测试函数
+      alert(dec2bin(10));
+      alert(dec2bin(233));
+      alert(dec2bin(1000));
+    </script>
+  </body>
+</html>

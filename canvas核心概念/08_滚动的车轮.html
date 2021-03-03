@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>08_滚动的车轮</title>
+  </head>
+  <body>
+    <canvas
+      id="myCanvas"
+      width="600"
+      height="600"
+      style="border: 1px solid #000000"
+    >
+    </canvas>
+    <script>
+      canvas = document.getElementById("myCanvas");
+      console.log(canvas);
+      var ctx = canvas.getContext("2d");
+
+      var image = new Image();
+      image.src = "images/lunzi.png";
+      image.onload = function () {
+        var deg = 0;
+        var x = 200;
+        setInterval(function () {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // 旋转的度数
+          x++;
+          deg += 0.1;
+          if (x < 0 || x >= canvas.width) {
+            x-=2;
+            deg -= 0.1;
+          }
+          ctx.save();
+          ctx.translate(x, 200);
+          ctx.rotate(deg);
+          //围绕自己的宽高围着范围更大
+          ctx.drawImage(image, -255 / 2, -255 / 2);
+          ctx.restore();
+        }, 10);
+      };
+    </script>
+  </body>
+</html>

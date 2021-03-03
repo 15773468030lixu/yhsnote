@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 数组
+       * 1.python中不叫数组，叫list,存储一系列元素，多个数据
+       * 2.数组的确定：创建的时候需要申请连续的内存空间，数组长度是固定的，当前数组不能满足容量需求时，需要扩容[一般是申请一个更大的数组，比如2倍，然后将原数组中元素复制过去]
+       * 3.如果放5个元素的数组，你想放6个，那你只能扩容，而扩容是非常需要性能的操作，插入元素也是，其他元素需要往后移
+       * 链表
+       * 1.有些语言称之为指针，链表的每个元素有一个存储元素本身的节点和一个指向下一个元素的引用组成
+       * 2.链表插入和删除的时间复杂度是最低的
+       * 3.访问那个位置的元素，你只能从头找，不同于数组只要给出索引即可，因为链表是一个一个相连的。你不访问第一个，你就无法访问第二个
+       * 4.理解了底层原理，你就会知道数组和链表该如何选择使用
+       * 5.列表:  火车头[head] 车人厢node[element next->] 车人厢node[element next->] 车人厢node[element next->null]
+       * 6.代码如何封装了  11个方法
+       * 7.增删改查append追加 insert插入 get indexOf update更新 removeAt删除对应位置的元素链表需要一个个去找性能没有数组快 remove给元素信息删除元素 isEmpty判断length是否为0 size直接返回length记录节点个数 toString链表结构转成字符串，方便操作者打印
+       */
+      // 封装单向链表的构造函数
+      function LinkedList() {
+        // 封装一个Node类, 用于保存每个节点信息
+        // 创建的时候不传next，只传data，因为，可能你不知道next指针指向谁
+        function Node(element) {
+          this.element = element;
+          this.next = null;
+        }
+
+        // 链表中的属性
+        this.length = 0;
+        // head属性必须指向第一个节点             如果这个head容器为空，则直接赋值一个新节点反之next指针指向一个节点，不为空，则遍历找到next指针指向空的元素
+        this.head = null;
+
+        // 链表尾部追加元素方法
+        LinkedList.prototype.append = function (element) {
+          // 1.根据新元素创建节点
+          var newNode = new Node(element);
+
+          // 2.判断原来链表是否为空,判断添加的是否是第一个节点
+          if (this.head === null) {
+            // 链表尾空
+            // 如果是第一个节点，先创建一个node，让head指针指向这个节点
+            this.head = newNode;
+          } else {
+            // 链表不为空
+            // 2.1.定义变量, 保存当前找到的节点
+            var current = this.head; //当前指向的第一个节点
+            while (current.next) {
+              current = current.next; //current.next是否为空，为空往后执行
+            }
+
+            // 2.2.找到最后一项, 将其next赋值为node
+            current.next = newNode;
+          }
+
+          // 3.添加了新节点 链表长度增加1 python语言不支持++
+          this.length += 1;
+        };
+
+        // 链表的toString方法 方便之后进行测试
+        LinkedList.prototype.toString = function () {
+          // 1.定义两个变量
+          var current = this.head;
+          var listString = "";
+
+          // 2.循环获取链表中所有的元素
+          while (current) {
+            // 数据拼接 但是没有第二行命令的话current永远指向第一个，你会发现测试的时候会是个死循环
+            listString += "," + current.element;
+            current = current.next;
+          }
+
+          // 3.返回最终结果
+          return listString.slice(1);
+        };
+
+        // 根据下标插入元素,只需指针来回变换即可
+        LinkedList.prototype.insert = function (position, element) {
+          // 1.检测越界问题: 越界插入失败
+          if (position < 0 || position > this.length) return false;
+          /**
+           * 情况一position等于0
+           * 情况二position等于2
+           * 情况三
+           */
+          // 2.定义变量, 保存信息
+          var newNode = new Node(element);
+          // 在開始找之前，先搞一个变量往后一直找
+          var current = this.head;
+          var previous = null;
+          index = 0;
+
+          // 3.判断是否列表是否在第一个位置插入
+          if (position == 0) {
+            // 火车头等于新节点，新节点的next等于原来的第一个head，但是原来的第一个不好获取，所以下面两行代码交换了一下位置
+            newNode.next = current;
+            this.head = newNode;
+          } else {
+            // 意味着让我的这个节点，改变指针，index指向的节点正好是我要找的这个节点，所以while循环遍历，index++先判断再＋
+            while (index++ < position) {
+              //previous等于第一个节点，
+              previous = current;
+              // 先让第一次等于head，等于head之后，从head遍历元素，
+              current = current.next;
+            }
+
+            newNode.next = current;
+            previous.next = newNode;
+          }
+
+          // 4.length+1
+          this.length++;
+
+          return true;
+        };
+       
+        LinkedList.prototype.get = function (position) {
+          // 获取到的元素只能到length-1，this.length没有元素，为空
+          if (position < 0 || position >= this.length) return null;
+          current = this.head;
+        //   满足我的while循环进来
+          while (index++ < position) {
+            current = current.next;
+          }
+          return current.element
+        };
+        
+        // 根据位置移除节点元素
+        LinkedList.prototype.removeAt = function (position) {
+          // 给position进行越界判断，传入的position不能是负数，长度不能超过链表的长度
+          // 1.检测越界问题: 越界移除失败, 返回null
+          if (position < 0 || position >= this.length) return null;
+
+          // 插入数据的逻辑:
+          // 2.定义变量, 保存信息
+          var current = this.head;
+          var previous = null;
+          var index = 0;
+
+          // 3.判断是否是移除第一项
+          if (position === 0) {
+              //没有引用指向自己的对象，浏览器自动回收这个对象
+            this.head = current.next;//this.head= this.head.next
+          } else {
+            while (index++ < position) {
+              previous = current;
+              current = current.next;
+            }
+            //写一行代码，需要两个变量预先保存
+            previous.next = current.next;
+          }
+
+          // 4.length-1
+          this.length--;
+
+          // 5.返回移除的数据  有些语言，会把删除的数据返回
+          return current.element;
+        };
+
+        // 根据元素获取链表中的位置  查询操作
+        LinkedList.prototype.indexOf = function (element) {
+          // 1.定义变量, 保存信息
+          var current = this.head;
+          index = 0;
+
+          // 2.找到元素所在的位置
+          while (current) {
+            if (current.element === element) {
+              return index;
+            }
+            index++;
+            current = current.next;
+          }
+
+          // 3.来到这个位置, 说明没有找到, 则返回-1
+          return -1;
+        };
+        
+        // 把我这个节点的数据改成新的数据
+        LinkedList.prototype.update = function (position, element) {
+        //   有position一定要搞越界信息
+          if (position < 0 || position >= this.length) return null;
+        //   修改数据先查找正确的节点
+        current = this.head;
+        while (index++ < position) {
+            current = current.next;
+          }
+           current.element = element
+           return true
+        };
+        // 根据元素删除信息
+        LinkedList.prototype.remove = function (element) {
+          var index = this.indexOf(element);
+          return this.removeAt(index);
+        };
+
+        // 判断链表是否为空
+        LinkedList.prototype.isEmpty = function () {
+          return this.length == 0;
+        };
+
+        // 获取链表的长度
+        LinkedList.prototype.size = function () {
+          return this.length;
+        };
+
+        // 获取第一个节点
+        LinkedList.prototype.getFirst = function () {
+          return this.head.element;
+        };
+      }
+
+      // 测试链表
+      // 1.创建链表
+      var list = new LinkedList();
+
+      // 2.追加元素
+      list.append(15);
+      list.append(10);
+      list.append(20);
+
+      // 3.打印链表的结果
+    //   alert(list); // 15,10,20
+
+      // 4.测试insert方法
+      list.insert(0, 100)
+      list.insert(4, 200)
+      list.insert(2, 300)
+    //   alert(list) // 100,15,300,10,20,200
+    //   alert(list.get(0))
+
+      // 5.测试removeAt方法
+      // list.removeAt(0)
+      // list.removeAt(1)
+      // list.removeAt(3)
+      // alert(list)
+
+    //   6.测试indexOf方法
+        //  alert(list.indexOf(15))
+        //  alert(list.indexOf(10))
+        //  alert(list.indexOf(20))
+        //  alert(list.indexOf(100))
+
+        // 6.测试update方法
+        // list.update(1,'aaa')
+        //  alert( list)
+         
+
+    //   7.测试remove方法
+      list.remove(100)
+      alert(list)
+
+      // // 8.测试其他方法
+      // alert(list.isEmpty())
+      // alert(list.size())
+      // alert(list.getFirst())
+    </script>
+  </body>
+</html>

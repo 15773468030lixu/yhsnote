@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>实(ಥ_ಥ)战</title>
+    <link rel="stylesheet" href="./reset.css" />
+    <script src="jquery-1.8.3.min.js"></script>
+    <script src="pixi.min.js"></script>
+    <style type="text/css">
+      #stage canvas {
+        width: 100%;
+      }
+      li {
+        list-style: none;
+        float: left;
+        width: 40px;
+        height: 60px;
+      }
+      .tabCont {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+
+    <div class="saveBtn"></div>
+    <div class="tabCont">
+      <div class="tCont">
+        <!-- 风景 跟舞台背景有关的标签序列号是0-8-->
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+        <li><img src="./images/light.svg" alt="" /></li>
+      </div>
+      <div class="tCont">
+        <!-- 人物 跟舞台背景有关的标签序列号是9-11 11-14新浪 -->
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+      </div>
+      <div class="tCont">
+        <!-- 修饰 跟舞台背景有关的标签序列号是15-26-->
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+        <li><img src="./images/sea-monster.svg" alt="" /></li>
+      </div>
+      <div class="tCont">
+        <!-- 宠物 跟舞台背景有关的标签序列号是27-32 -->
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+        <li><img src="./images/dog.svg" alt="" /></li>
+      </div>
+    </div>
+    <script type="text/javascript">
+      // 场景布置正经代码
+      const app = new PIXI.Application({
+        width: 750,
+        height: 1334,
+        transparent: true,
+      });
+      //1 创建舞台和默认背景
+      document.getElementById("stage").appendChild(app.view);
+      //舞台设置好后，创建一个默认的背景图
+      let bgSpr = new PIXI.Sprite.from("./images/lunzi.png");
+      //让这个精灵图居于左上角对齐
+      bgSpr.position.set(0, 0);
+      //背景图的宽高还未设置,样式也要设置,这样显示的时候就不会糊
+      bgSpr.width = "750";
+      bgSpr.height = "1334";
+      //给这个背景图片命令一个别名
+      bgSpr.name = "bg";
+      app.stage.addChild(bgSpr);
+
+      // 2点击页卡的任务
+      $(".tabCont li").each(function (i) {
+        $(this).click(function () {
+          // let suid = $('.subtab li').eq(i).attr('id')  //得到id的名字
+          console.log(i);
+          //风景0-8
+          if (i <= 8 && i >= 0) {
+            //背景图片的精灵通过别名获取
+            i++; //当添加字符串和图片路径一一对应上
+            app.stage.getChildByName("bg").texture = new PIXI.Texture.from(
+              "./images/lunzi" + i + ".png"
+            );
+          }
+          //人物9-14
+          if (i <= 14 && i >= 9) {
+            if (i == 9) {
+              // 当我们添加新郎的时候，头发，身体，脸部三部分
+              addSpr(0);
+            }
+            if (i == 10) {
+              console.log("伴郎");
+            }
+            if (i == 11) {
+              console.log("伴娘");
+            }
+            if (i == 13) {
+              console.log("男童");
+            }
+            if (i == 14) {
+              console.log("女童");
+            }
+            if (i == 12) {
+              addSpr(1);
+            }
+          }
+          //修饰15-26
+          if (i <= 26 && i >= 15) {
+          }
+          //宠物27-32
+        });
+      });
+      function showSub(n) {
+        $(".subtab ul").hide();
+        switch (n) {
+          case 9:
+            $(".subtab ul").eq(0).show();
+            addSpr(0);
+            break;
+          case 12:
+            $(".subtab ul").eq(4).show();
+            addSpr(1);
+            break;
+          default:
+            let m = n - 9;
+            $(".subtab ul").eq(m).show();
+            addSpr(2);
+            break;
+        }
+      }
+      function randomPos() {
+        return {
+          x: 750 / 2 + Math.random() + 40, //以舞台为中心的随机摆放
+          y: 1334 / 2 + Math.random() + 40, //向下移动一个随机数
+        };
+      }
+      let squ = 0;
+      let space = 10 * 2;
+      // 这里的who,0 新郎 1新娘 2 其他
+      // 注意无论是人物、修饰、宠物，都需要添加到一个精灵组中，即一个容器里，以精灵组的形式添加到舞台中
+      function addSpr(who) {
+        //在这个精灵组中，我们让他分为4块， 一个是添加图片的精灵组，还有三个是普通的精灵组，这三个精灵组一个是用来显示，当用户选中舞台元素的时候，那个边框的效果，
+        //还有一个是缩放的精灵组，还有用户点击删除按钮的时候的一个精灵组
+        let container = new PIXI.Container();
+        container.name = "Sprite" + squ;
+        squ++;
+
+        //精灵组的位置以舞台中心随机摆放，反复点击同一个元素会有个层级关系，很清楚的看到是两个元素
+        let cpos = randomPos();
+        container.position.set(cpos.x, cpos.y);
+
+        // 边框、缩放按钮、删除按钮、跟container精灵组有关
+        let borderline = new PIXI.Graphics();
+        borderline.name = "borderline";
+        borderline.position.set(0, 0); // 这个宽高与精灵组container有关,
+
+        let resizeBtn = new PIXI.Sprite.from("./images/btn-resize.png");
+        resizeBtn.name = "resizeBtn";
+        resizeBtn.position.set(0, 0);
+        resizeBtn.width = "50";
+        resizeBtn.height = "50";
+
+        // 缩放按钮的尺寸是50*50
+
+        let deleteBtn = new PIXI.Sprite.from("./images/btn-del.png");
+        deleteBtn.name = "deleteBtn";
+        deleteBtn.position.set(0, 0);
+        // 删除按钮的尺寸是50*50
+        deleteBtn.width = "50";
+        deleteBtn.height = "50";
+
+        // 人物的三个部分和结构放在一个精灵组
+        let imgContainer = new PIXI.Container();
+        imgContainer.position.set(10, 10); //人物与边框的一定间隙10px
+
+        // container精灵组这个容器有4个孩子，一个是精灵组，另外三个是精灵图
+        container.addChild(imgContainer); //图片对应的精灵组是0
+        container.addChild(resizeBtn); //
+        container.addChild(borderline); //边框对应的精灵组是1
+        container.addChild(deleteBtn);
+
+        app.stage.addChild(container);
+
+        //绑定touchstart事件
+        imgContainer
+          .on("touchstart", dragdropTouchStart)
+          .on("touchmove", dragdropTouchMove)
+          .on("touchend", cleardropTouchEnd);
+        resizeBtn.on("touchstart", resizeTouchStart);
+        deleteBtn.on("touchend", del);
+        // 当添加新郎的时候，实现判断精灵组是否之前有新郎，有的话就不能添加
+        let maleSpace = [0, 0];
+        if (who == 0 || who == 1) {
+          let stageChildren = app.stage.children;
+          let scNum = stageChildren.length;
+          for (let v = 0; v < scNum; v++) {
+            if (stageChildren[v].name === "bridegroomYang" && who == 0) {
+              alert("新郎只允许添加一个");
+              return;
+            } else if (stageChildren[v].name === "bridegHui" && who == 1) {
+              alert("新娘只允许添加一个");
+              return;
+            } else {
+              if (who == 0) {
+                // 新郎
+                const male = [340, 681];
+                maleSpace = [340 + space, 681 + space];
+                //   公共代码
+                container.width = maleSpace[0];
+                borderline.width = maleSpace[0];
+                container.height = maleSpace[1];
+                borderline.height = maleSpace[1];
+                borderline.lineStyle(2, 0xaaaaaa);
+                borderline.drawRoundedRect(2, 0xaaaaaa);
+                container.pivot.set(maleSpace[0] / 2, maleSpace[1] / 2);
+
+                resizeBtn.position.set(
+                  maleSpace[0] - 50 / 2,
+                  maleSpace[1] - 50 / 2
+                );
+                deleteBtn.position.set(-50 / 2, maleSpace[1] - 50 / 2);
+
+                //   公共代码
+
+                imgContainer.name = "bridegroomYang";
+                let mbody = new PIXI.Sprite.from("./images/body.svg");
+                mbody.width = 250;
+                mbody.height = 550;
+                mbody.position.set(80, 148);
+
+                let mface = new PIXI.Sprite.from("./images/face.svg");
+                mface.position.set(80, 650);
+
+                let mhair = new PIXI.Sprite.from("./images/hair.svg");
+                mhair.position.set(80, 202);
+
+                imgContainer.addChild(mbody);
+                imgContainer.addChild(mface);
+                imgContainer.addChild(mhair);
+
+                console.log("添加新郎bridegroomYang成功");
+
+                //给精灵组添加锚点，保持中心点去移动
+              } else if (who == 1) {
+                // 新娘
+                const female = [460, 806];
+                maleSpace = [460 + space, 806 + space];
+                //   公共代码
+                container.width = maleSpace[0];
+                borderline.width = maleSpace[0];
+                container.height = maleSpace[1];
+                borderline.height = maleSpace[1];
+                borderline.lineStyle(2, 0xaaaaaa);
+                borderline.drawRoundedRect(2, 0xaaaaaa);
+                container.pivot.set(maleSpace[0] / 2, maleSpace[1] / 2);
+
+                resizeBtn.position.set(
+                  maleSpace[0] - 50 / 2,
+                  maleSpace[1] - 50 / 2
+                );
+                deleteBtn.position.set(-50 / 2, maleSpace[1] - 50 / 2);
+
+                //   公共代码
+
+                imgContainer.name = "bridegHui";
+                let febody = new PIXI.Sprite.from("./images/light.svg");
+                febody.width = 250;
+                febody.height = 550;
+                febody.position.set(80, 148);
+
+                let feface = new PIXI.Sprite.from("./images/face.svg");
+                feface.position.set(80, 650);
+
+                let fehair = new PIXI.Sprite.from("./images/hair.svg");
+                fehair.position.set(80, 202);
+
+                imgContainer.addChild(febody);
+                imgContainer.addChild(feface);
+                imgContainer.addChild(fehair);
+
+                console.log("添加新娘bridegHui成功");
+              } else {
+                // 其他
+              }
+            }
+          }
+        }
+      }
+      //拖拽43
+      let startPos = {
+        x: 0,
+        y: 0,
+      };
+      let objPos = {
+        x: 0,
+        y: 0,
+      };
+      let flag = true; //是否可以进行拖拽操作
+      let sprName = ""; //进行拖拽的精灵组别名
+      function dragdropTouchStart() {
+        // 1.清除选中状态
+        // clearSelected()
+        // 2.当前精灵组选中状态 this resizeBtn imgContainer的父容器精灵组
+        this.parent.children[1].visible = true;
+        this.parent.children[2].visible = true;
+        this.parent.children[3].visible = true;
+
+        // 3.让选中的精灵组最靠前  可能是队列操作，先进先出
+        app.stage.children(this.parent, app.stage.children.length - 1);
+
+        // 4.识别当前是否可以执行拖拽操作
+        if (flag && this.name != "resizeBtn") {
+          flag = false;
+          startPos = {
+            x: e.data.global.x,
+            y: e.data.global.y,
+          };
+          objPos = {
+            // 父节点
+            x: this.parent.getGlobalPosition().x,
+            y: this.parent.getGlobalPosition().x,
+          };
+          sprName = this.parent.name;
+        }
+      }
+      function dragdropTouchMove() {
+        if (this.name != "resizeBtn" && (this.parent.name = sprName)) {
+          let tempPos = {
+            x: e.data.global.x,
+            y: e.data.global.y,
+          };
+          // 父节点移动的位置加上【移动到的位置减去元素原本移动的位置】
+          this.parent.position.set(objPos.x + (tempPos.x - startPos.x));
+        }
+      }
+      function cleardropTouchEnd() {
+        flag = true;
+        let resizeSprName = ""; //执行缩放操作的精灵组的名字
+        let sprName = ""; //进行拖拽的精灵组别名
+        app.stage.getChildByName("bg").off("touchmove");
+        app.stage.getChildByName("bg").interactive = false; //不然无法识别用户的操作
+      }
+      //缩放44
+      let resizeStartPosX = 0; //用来记录当用户触碰缩放操作精灵的时候的坐标值X
+      let resizeSprName = ""; //执行缩放操作的精灵组的名字
+      let resizeScaleX = 1; //精灵组缩放操作X的值
+      function resizeTouchStart(e) {
+        if (flag) {
+          resizeStartPosX = e.data.global.x;
+          resizeSprName = this.parent.name;
+          resizeScaleX = this.parent.scale.x;
+          // 当用户点击缩放的精灵时,把背景的精灵绑定缩放事件，当用户鼠标抬起，把背景图片对应的精灵在解除绑定
+          app.stage.getChildByName("bg").interactive = true; //不然无法识别用户的操作
+          app.stage
+            .getChildByName("bg")
+            .on("touchmove", resizeTouchMove)
+            .on("touchend", cleardropTouchEnd);
+        }
+      }
+      function resizeTouchMove() {
+        if (this.parent.name == resizeSprName) {
+          //当用户不断移动的时候不断的创建x,y坐标值
+          let temPosX = e.data.global.x;
+          let dur = temPosX - resizeStartPosX;
+          //判断差值大于0 还是小于0 来判断是否进行缩放放大操作
+          resizeStartPosX = temPosX; // 为了用户缩小又放大操作
+          if (dur > 0) {
+            //   放大
+            if (this.parent.scale.x <= 1.5) {
+              this.parent.scale.set(this.parent.scale + 0.01);
+            }
+          } else if (dur < 0) {
+            if (this.parent.scale.x >= 0.4) {
+              this.parent.scale.set(this.parent.scale + 0.01);
+            }
+          } else {
+          }
+        }
+      }
+      // 删除45
+      function del() {
+        //移除当前对象的父节点
+        app.stage.removeChild(this.parent);
+      }
+
+      //生成海报45
+      //把舞台导成base64格式，在使用PIXI创建一个舞台，那就是第二个舞台，把第一个舞台中图片信息转到第二个舞台中
+      $(".saveBtn").on("touchend", makeposter);
+      function makeposter() {
+        //   new PIXI.renderer =>  plugins =>extract =>base64
+
+        let tupic = app.renderer.plugins.extract.base64(app.stage);
+
+        const app2 = new PIXI.Application({
+          width: 750,
+          height: 245 + 1334,
+          transparent: true,
+        });
+
+        // setTimeout(function () {
+        //   //1 创建舞台和默认背景
+        //   document.getElementById("stage").appendChild(app2.view);
+
+        //   // 2.清除选中状态
+
+        //   // 3.让用户性能更好
+        //   // 3.把导出的base64图片放在舞台中
+        //   let picBase64 = new PIXI.Sprite.from(tupic); //设置宽高 位置 
+        //   app2.stage.addChild(picBase64);
+
+        //   // let words = ["随机的文案"];
+        //   // //   1.创建随机数
+        //   // let rand = Math.floor(words.length * Math.random());
+        //   // let words = words[rand];
+        //   // // 2.设置文本样式
+        //   // let wordStyle = {
+        //   //   fontStyle: "12",
+        //   // };
+        //   // let myword = new PIXI.Text(word, wordStyle);
+        //   app2.stage.addChild(myword);
+        //   setTimeout(function(){
+
+        //   },200)
+        // }, 200);
+      }
+    </script>
+  </body>
+</html>

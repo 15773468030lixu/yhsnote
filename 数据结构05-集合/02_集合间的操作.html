@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02_集合间的操作</title>
+  </head>
+  <body>
+    <script>
+      /**
+       * 1.并集:对于给定的两个集合，返回一个包含两个集合中所有元素的新集合
+       * 2.交集:包含两个集合共有元素的集合
+       * 3.差集:存在于第一个集合并且不存在另一个集合
+       * 4.子集:验证一个给定的结合是否是另一个集合的子集
+       *
+       * 实现集合的操作
+       */
+      function Set() {
+        this.item = {};
+        Set.prototype.has = function (value) {
+          return this.item.hasOwnProperty(value);
+        };
+        Set.prototype.add = function (value) {
+          if (this.has(value)) return false;
+          this.item[value] = value;
+          return true;
+        };
+        Set.prototype.values = function () {
+          return Object.keys(this.item);
+        };
+        // 获取集合的大小
+        Set.prototype.size = function () {
+          return Object.keys(this.items).length;
+
+          /*
+            JavaScript里json格式的对象是没有length属性的，
+            如果需要得到一个对象的具体有多少个属性，
+            Object.keys方法就能派上用场了，
+            Object.keys方法返回的是一个数组，
+            所以它有length值
+
+
+            考虑兼容性问题, 使用下面的代码
+            var count = 0
+            for (var value in this.items) {
+                if (this.items.hasOwnProperty(value)) {
+                    count++
+                }
+            }
+            return count
+            */
+        };
+
+        //并集
+        Set.prototype.union = function (otherSet) {
+          //this. 集合对象A
+          //otherset：集合对象B
+          //1.创建新的集合
+          var unionSet = new Set();
+          //2.将A集合中所有元素添加到新集合中
+          var values = this.values();
+          for (var i = 0; i < values.length; i++) {
+            unionSet.add(values[i]);
+          }
+          //3.将集合B中的元素添加到新集合
+          values = otherSet.values(); //拿到之前的values赋新的值
+          for (var i = 0; i < values.length; i++) {
+            unionSet.add(values[i]);
+          }
+          return unionSet;
+        };
+
+        //交集
+        Set.prototype.intersection = function (otherSet) {
+          //this. 集合对象A
+          //otherset：集合对象B
+          //1.创建新的集合
+          var intersection = new Set();
+          //2.将A集合中所有元素判断是否在新的集合B中的元素中
+          values = this.values(); //拿到之前的values赋新的值
+          for (var i = 0; i < values.length; i++) {
+            if (otherSet.has(values[i])) {
+              intersection.add(values[i]);
+            }
+          }
+          return intersection;
+        };
+        //差集
+        Set.prototype.difference = function (otherSet) {
+          //this. 集合对象A
+          //otherset：集合对象B
+          //1.创建新的集合
+          var difference = new Set();
+          //2.将A集合中所有元素判断是否在新的集合B中的元素中
+          values = this.values(); //拿到之前的values赋新的值
+          for (var i = 0; i < values.length; i++) {
+            if (!otherSet.has(values[i])) {
+              difference.add(values[i]);
+            }
+          }
+          // values = otherSet.values(); //拿到之前的values赋新的值
+          // for (var i = 0; i < values.length; i++) {
+          //   difference.add(values[i]);
+          // }
+          return difference;
+        };
+        //子集
+        Set.prototype.subset = function (otherSet) {
+          //this. 集合对象A
+          //otherset：集合对象B
+          //1.创建新的集合
+          var subset = new Set();
+          //2.集合a里面的所有元素都能在集合b里面找到
+          values = this.values(); //拿到之前的values赋新的值
+          for (var i = 0; i < values.length; i++) {
+            if (!otherSet.has(values[i])) {
+              return false;
+            }
+          }
+          // values = otherSet.values(); //拿到之前的values赋新的值
+          // for (var i = 0; i < values.length; i++) {
+          //   difference.add(values[i]);
+          // }
+          return true;
+        };
+      }
+      // var ni = new Set();
+      // alert(ni.add(100));
+      // alert(ni.has(300));
+
+      var setA = new Set();
+      setA.add("jjj");
+      setA.add("555");
+      setA.add("lll");
+      setA.add("uuu");
+      setA.add("555");
+      var setB = new Set();
+      setB.add("AAA");
+      setB.add("555");
+      setB.add("CBA");
+      // var uniset = setA.union(setB);
+      // alert(uniset.values());
+      // var uniset = setA.intersection(setB);
+      // alert(uniset.values());
+      // var uniset = setA.difference(setB);
+      // alert(uniset.values());
+      var uniset = setA.subset(setB);
+      alert(uniset);
+    </script>
+  </body>
+</html>

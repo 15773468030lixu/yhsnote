@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>02_红黑树</title>
+</head>
+<body>
+<script>
+  /**
+   * 规则-为了让一棵树平衡-记住
+   * 1.节点是红色或者黑色，节点不可以没有颜色
+   * 2.根节点必须是黑色,
+   * 3.每个叶子节点都是空节点，用null把以前没有的左子节点右子节点补齐，补齐的null节点本身是黑丝节点
+   * 4.每个红色节点，他的两个子节点一定是黑色
+   * 5.从任何一个节点到每个叶子的所有路径都包含相同数目的黑色节点
+   * 
+   * 如何利用规则完成一个红黑树，达到一个平衡状态
+  */
+    // 创建BinarySearchTree
+    function BinarySerachTree() {
+        // 创建节点构造函数
+        function Node(key) {
+            this.key = key
+            this.left = null
+            this.right = null
+        }
+    }
+
+    // 测试代码
+    var bst = new BinarySerachTree()
+
+</script>
+</body>
+</html>

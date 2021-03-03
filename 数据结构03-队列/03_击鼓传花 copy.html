@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <script>
+      // 自定义队列
+      function Queue() {
+        this.items = [];
+
+        // 队列操作的方法
+        // 将元素加入到队列
+        // enter queue方法
+        Queue.prototype.enqueue = function (e) {
+          this.items.push(e);
+        };
+
+        // delete queue方法
+        Queue.prototype.dequeue = function () {
+          return this.items.shift();
+        };
+        // 查看前端的元素
+        Queue.prototype.front = function () {
+          return this.items[0];
+        };
+        // 查看队列是否为空
+        Queue.prototype.isEmpty = function () {
+          return this.items.length == 0;
+        };
+        // 查看队列中元素的个数
+        Queue.prototype.size = function () {
+          return this.items.length;
+        };
+        Queue.prototype.toString = function () {
+          var resultString = "";
+          for (var i = 0; i < this.items.length; i++) {
+            resultString += this.items[i] + "";
+            return resultString;
+          }
+        };
+      }
+
+      // 实现击鼓传花的函数喊道某個人數字為5，则删掉，下一个人继续从开始数下去
+      function passGame(nameList, num) {
+        // 1.创建一个队列, 并且将所有的人放在队列中
+        // 1.1.创建队列
+        var queue = new Queue();
+
+        // 1.2.通过for循环, 将nameList中的人放在队列中
+        for (let i = 0; i < nameList.length; i++) {
+          queue.enqueue(nameList[i]);
+        }
+
+        // 2.寻找最后剩下的人
+
+        // 将前num-1中的人, 都从队列的前端取出放在队列的后端
+        while (queue.size() > 1) {
+          for (let j = 0; j < num-1; j++) {
+            queue.enqueue(queue.dequeue());
+          }
+          queue.dequeue();
+
+          // 先从前端队列删除掉,在push到队列中
+
+          // 将第num个人, 从队列中移除
+        }
+        // queue.size() =1结束循环
+        // 3.获取剩下的一个人
+        return queue.front();
+        // 4.获取该人在队列中的位置
+      }
+
+      // 验证结果
+      var names = ["John", "Jack", "Camila", "Ingrid", "Carl"];
+      var index = passGame(names, 7);
+      alert("最终位置:" + index);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    /**
+     * 1.受限的线性结构对于解决特定高度问题有效果，如函数栈的调用，十进制转二进制
+     * 2.在开发用到的队列，
+     * 有五份文档进行打印，先输入先输出，利用队列进行实现的
+     * 开启多线程，100个线程同时运行，cpu压力是非常大的，如果某些任务非常多的时候u，规定只允许四个线程运行
+     * 其他任务使用线程队列，一旦开启线程，按照次序来开启线程，先开启的先执行对应的任务
+     * 
+    */
+    // 自定义队列
+    function Queue() {
+        var items = []
+
+        // 队列操作的方法
+        // 将元素加入到队列
+        // enter queue方法
+        this.enqueue = function (element) {
+            items.push(element)
+        }
+
+        // delete queue方法
+        this.dequeue = function () {
+            // 先来的删除用shift方法
+            return items.shift()
+        }
+
+        // 查看前端的元素
+        this.front = function () {
+            return items[0]
+        }
+
+        // 查看队列是否为空
+        this.isEmpty = function () {
+            return items.length == 0
+        }
+
+        // 查看队列中元素的个数
+        this.size = function () {
+            return items.length
+        }
+    }
+
+    // 创建队列对象
+    var queue = new Queue()
+
+    // 在队列中添加元素
+    queue.enqueue("abc")
+    queue.enqueue("cba")
+    queue.enqueue("nba")
+
+    // 查看一下队列前端元素
+    alert(queue.front())
+
+    // 查看队列是否为空和元素个数
+    alert(queue.isEmpty())
+    alert(queue.size())
+
+    // 从队列中删除元素
+    alert(queue.dequeue())
+    alert(queue.dequeue())
+    alert(queue.dequeue())
+
+</script>
+</body>
+</html>

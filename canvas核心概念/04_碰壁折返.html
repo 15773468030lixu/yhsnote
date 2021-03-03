@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01_canvas画布星星案例</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" style="border: 1px solid #000000"> </canvas>
+    <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      //减30，最左边不超过屏幕，最右边不超过屏幕
+      canvas.width = document.documentElement.clientWidth - 10;
+      canvas.height = document.documentElement.clientHeight;
+      canvas.style.display = "block";
+      function Ball(x, y, r) {
+        this.x = parseInt(Math.random() * canvas.width);
+        this.y = parseInt(Math.random() * canvas.height);
+        this.r = 10;
+        console.log(this.x, this.y, this.color);
+        this.color = getRandom();
+        this.dx = parseInt(Math.random() * 10) - 5;
+        this.dy = parseInt(Math.random() * 10) - 5;
+        BallArr.push(this);
+      }
+      Ball.prototype.update = function () {
+        // 鼠标监听移动的过程渲染
+
+        this.x += this.dx;
+        this.y += this.dy;
+        // 如果this.x小于当前的this.r,走出屏幕了
+        if (this.x < 0 || this.x >= canvas.width) {
+          this.dx = -this.dx;
+        }
+        if (this.y < 0 || this.y >= canvas.height) {
+          this.dy = -this.dy;
+        }
+      };
+      Ball.prototype.render = function () {
+        // 鼠标监听移动的过程渲染
+        ctx.beginPath();
+        ctx.globalAlpha = 1;
+        if (this.r <= 0) return;
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      };
+      var BallArr = [];
+      for (var i = 0; i <= 20; i++) {
+        new Ball();
+      }
+      setInterval(function () {
+        // console.log(BallArr);遍历这个小球
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //清除当前myCanvas画布大小
+
+        for (var i = 0; i < BallArr.length; i++) {
+          // 动画三操作
+          BallArr[i].update();
+          BallArr[i].render();
+        }
+      }, 10);
+      //随机颜色
+      function getRandom() {
+        var allType = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        var allTypeArr = allType.split(",");
+        console.log(allTypeArr);
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          // 获取下标值
+          var random = parseInt(Math.random() * allTypeArr.length);
+          //  拼接6个字
+          color += allTypeArr[random];
+        }
+        return color;
+      }
+      console.log(getRandom());
+    </script>
+  </body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>06_线型的属性 绘制文本 _渐变 08_阴影</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .r {
+        position: relative;
+        width: 250px;
+        height: 60px;
+        font-size: 40px;
+        line-height: 60px;
+        text-align: center;
+        border: 1px solid #000;
+      }
+      #myCanvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      /*  */
+    </style>
+  </head>
+  <!-- 修饰线型-->
+  <body>
+    <div class="r">
+      特等奖
+      <canvas
+        id="myCanvas"
+        width="250"
+        height="60"
+        style="border: 1px solid #000000"
+      >
+      </canvas>
+    </div>
+    <!-- <canvas id="canvas"></canvas>
+    <div style="display: none">
+      <img
+        id="source"
+        src="https://mdn.mozillademos.org/files/5397/rhino.jpg"
+        width="300"
+        height="227"
+      />
+    </div> -->
+    <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      // ----------------------------线型的属性----------------------------
+      // ctx.strokesStyle = "c000000";
+      // ctx.beginPath();
+      // ctx.moveTo(100,100);
+      // ctx.lineTo(200,200);
+      // ctx.lineTo(300,100);
+      // ctx.lineWidth = 20;
+      // ctx.lineCap = "round";
+      // ctx.lineJoin = "bevel";    // ctx.closePath();
+      // ctx.stroke();
+      // ----------------------------绘制文本----------------------------
+      // ctx.font = "48px serif";
+      // ctx.fillText("Hello world", 50, 100);
+      //----------------------------使用图片----------------------------
+
+      // JavaScript
+      // var canvas = document.getElementById("canvas");
+      // var ctx = canvas.getContext("2d");
+      // var image = document.getElementById("source");
+      // // 前4个数字把切片切下来，后4个数字，先把切下来的图片放在屏幕某个坐标，在拉伸图片
+      // ctx.drawImage(image, 33, 71, 104, 124, 21, 20, 87, 104);
+      //----------------------------canvas在游戏加载中加载静态资源----------------------------
+      // function Game(){
+      //   this.dom = document.getElementById("myCanvas");
+      //   console.log(this.dom )
+      //   var ctx = canvas.getContext("2d");
+      //   // 添加属性，保存需要的地址
+      //   this.R= {
+      //     "gugong1":'src,jpg',
+      //     "gugong2":'src,jpg',
+      //     "gugong3":'src,jpg',
+      //     "gugong4":'src,jpg'
+      //   };
+      //   var count = 0
+      //   // 获取资源的地址获取key属性
+      //   var allAmount = Object.keys(this.R).length
+      //   console.log(allAmount ) //返回一个数组，存放所有key的集合
+      //   for( k in this.R){
+      //     console.log(this.R[k])
+      //     var src =this.R[k]
+      //     // new一个新的图片
+      //     this.R[k] =new Image()
+      //     this.R[k].src=src
+      //   }
+      // }
+      // console.log(new Game)
+      //----------------------------canvas用蒙版加盖实现刮刮乐----------------------------
+      ctx.fillStyle = "#333";
+      ctx.fillRect(0, 0, 250, 60);
+      // 新画上的元素实际上就是擦除的元素
+      ctx.globalCompositeOperation = "destination-out";
+      // 鼠标按下
+      canvas.onmousedown = function () {
+        console.log("鼠标按下");
+        // 鼠标拖动
+        canvas.onmousemove = function (e) {
+          // ctx.fillStyle = "#333";
+          console.log("拖动");
+          ctx.beginPath()
+          ctx.arc(e.offsetX,e.offsetY,20,0,10,false);
+          // ctx.closePath()
+          // ctx.fillStyle = "pink";
+          ctx.fill()
+        };
+      };
+    </script>
+  </body>
+</html>

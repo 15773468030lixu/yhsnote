@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创建集合类</title>
+</head>
+<body>
+<script>
+    /**
+     * 1.集合一般情况下用哈希表实现 用JS是Object对象封装集合类Set类，明确集合的内部实现机制
+     * 2.数学集合允许元素有重复，而计算机里的集合无序不允许重复，ES6的Set类
+     * 3。 
+    */
+    // 封装集合的构造函数，考虑有哪些属性和方法
+    function Set() {
+        // 使用一个JS里的Object对象来保存集合的元素,Object对象里的keys属性本身是一个集合类
+        this.items = {}
+
+        // 集合的操作方法
+        // 判断集合中是否有某个元素
+        Set.prototype.has = function (value) {
+            //如何判断对象是否包含某个键呢？
+            return this.items.hasOwnProperty(value)
+        }
+
+        // 向集合中添加元素
+        Set.prototype.add = function (value) {
+            // 1.判断集合中是否已经包含了该元素，如果没有包含，往下接着走
+            if (this.has(value)) return false
+
+            // 2.将元素添加到集合中,实际上对象里面添加属性,
+            this.items[value] = value
+            return true
+        }
+
+        // 从集合中删除某个元素
+        Set.prototype.remove = function (value) {
+            // 1.判断集合中是否包含该元素
+            if (!this.has(value)) return false
+
+            // 2.包含该元素, 那么将元素删除
+            delete this.items[value]
+            return true
+        }
+
+        // 清空集合中所有的元素
+        Set.prototype.clear = function () {
+            this.items = {}
+        }
+
+        // 获取集合的大小
+        Set.prototype.size = function () {
+            return Object.keys(this.items).length
+
+            /*
+            JavaScript里json格式的对象是没有length属性的，
+            如果需要得到一个对象的具体有多少个属性，
+            Object.keys方法就能派上用场了，
+            Object.keys方法返回的是一个数组，
+            所以它有length值
+
+
+            考虑兼容性问题, 使用下面的代码
+            var count = 0
+            for (var value in this.items) {
+                if (this.items.hasOwnProperty(value)) {
+                    count++
+                }
+            }
+            return count
+            */
+        }
+
+        // 获取集合中所有的值
+        Set.prototype.values = function () {
+            return Object.keys(this.items)
+
+            /*
+            考虑兼容性问题, 使用下面的代码
+            var keys = []
+            for (var value in this.items) {
+                keys.push(value)
+            }
+            return keys
+            */
+        }
+
+        // 集合的并集
+        Set.prototype.union = function (otherSet) {
+
+        }
+    }
+
+    // 测试和使用集合类
+    var set = new Set()
+
+    // 添加元素
+    set.add(1)
+    alert(set.values()) // 1
+    set.add(1)
+    alert(set.values()) // 1
+
+    set.add(100)
+    set.add(200)
+    alert(set.values()) // 1,100,200
+
+    // 判断是否包含元素
+    alert(set.has(100)) // true
+
+    // // 删除元素
+    // set.remove(100)
+    // alert(set.values()) // 1, 200
+
+    // // 获取集合的大小
+    // alert(set.size()) // 2
+    // set.clear()
+    // alert(set.size()) // 0
+</script>
+</body>
+</html>

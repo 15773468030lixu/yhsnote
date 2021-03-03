@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>05_小球连线  透明度</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <!-- 小球连线规则，判定某个小球和谁连线的绝对值范围之内大于150左右，
+    根据x、y 绝对值进行判定，这样就可以进行渲染的逻辑-->
+  <body>
+    <canvas id="myCanvas" style="border: 1px solid #000000"> </canvas>
+    <script>
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      //减30，最左边不超过屏幕，最右边不超过屏幕
+      canvas.width = document.documentElement.clientWidth - 10;
+      canvas.height = document.documentElement.clientHeight;
+      canvas.style.display = "block";
+      function Ball(x, y, r) {
+        this.x = parseInt(Math.random() * canvas.width);
+        this.y = parseInt(Math.random() * canvas.height);
+        this.r = 10;
+        console.log(this.x, this.y, this.color);
+        this.color = getRandom();
+        this.dx = parseInt(Math.random() * 10) - 5;
+        this.dy = parseInt(Math.random() * 10) - 5;
+        BallArr.push(this);
+        this.index = BallArr.length - 1;
+      }
+      Ball.prototype.update = function () {
+        // 鼠标监听移动的过程渲染
+
+        this.x += this.dx;
+        this.y += this.dy;
+        // 如果this.x小于当前的this.r,走出屏幕了
+        if (this.x < 0 || this.x >= canvas.width) {
+          this.dx = -this.dx;
+        }
+        if (this.y < 0 || this.y >= canvas.height) {
+          this.dy = -this.dy;
+        }
+      };
+      Ball.prototype.render = function () {
+        for (var i = this.index; i < BallArr.length; i++) {
+        // 鼠标监听移动的过程渲染
+        ctx.beginPath();
+        // 透明度的值0-1之间的小数
+        // 根据当前的两个已经连线的小球距离进行线的透明度他減去他平方開根號，距離在猛一會，被十除點，無綫大的值，花不到不会去画
+        ctx.globalAlpha = 10/ Math.sqrt(Math.pow(BallArr[i].x - this.x,2)+ Math.pow(BallArr[i].y - this.y,2));
+        console.log(ctx.globalAlpha)
+        if (this.r <= 0) return;
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        //遍历每个球
+       
+          if (
+            Math.abs(BallArr[i].x - this.x) < 150 &&
+            Math.abs(BallArr[i].y - this.y) < 150
+          ) {
+            // console.log('可以画线')
+            // 六步
+            ctx.strokesStyle = "c000000";
+            ctx.beginPath();
+            ctx.moveTo(this.x, this.y);
+            ctx.lineTo(BallArr[i].x, BallArr[i].y);
+            ctx.closePath();
+            ctx.stroke();
+            // bug:两个球同时向对方走两根线在，吧每個位置記錄一下，i的出初始值為自己的下标值，从自己开始,这样循环就只走一次
+          }
+        }
+      };
+      var BallArr = [];
+      for (var i = 0; i <= 20; i++) {
+        new Ball();
+      }
+      setInterval(function () {
+        // console.log(BallArr);遍历这个小球
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //清除当前myCanvas画布大小
+        for (var i = 0; i < BallArr.length; i++) {
+          // 动画三操作
+          BallArr[i].update();
+          BallArr[i].render();
+        }
+      }, 10);
+      //随机颜色
+      function getRandom() {
+        var allType = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        var allTypeArr = allType.split(",");
+        console.log(allTypeArr);
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          // 获取下标值
+          var random = parseInt(Math.random() * allTypeArr.length);
+          //  拼接6个字
+          color += allTypeArr[random];
+        }
+        return color;
+      }
+      console.log(getRandom());
+    </script>
+  </body>
+</html>

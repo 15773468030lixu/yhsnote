@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02_pixijs_场景布置</title>
+  </head>
+  <link rel="stylesheet" href="./reset.css" />
+  <script src="pixi.min.js"></script>
+  <!-- 注意canvas设置的高度宽度和canvas样式的高度宽度是两个概念 -->
+  <style type="text/css">
+    #stage canvas {
+      /* 保持图片平铺在屏幕 */
+      width: 100%;
+    }
+  </style>
+  <body>
+    <!-- pixijs添加的所有元素都为精灵 -->
+    <div id="stage"></div>
+    <button id="scaleBtn">缩放</button>
+    <script type="text/javascript">
+      // 设置的舞台   注意canvas设置的高度宽度和canvas样式的高度宽度是两个概念
+      const app = new PIXI.Application({
+        // 从pixi.application查看文档
+        width: 750,
+        height: 1334,
+        resolution: 1,
+      });
+      document.getElementById("stage").appendChild(app.view);
+      // 如何添加精灵对象
+      const bgSpr = new PIXI.Sprite.fromImage("./images/lunzi.png");
+      bgSpr.width = 750;
+      bgSpr.height = 1334;
+      bgSpr.position.set(0, 0);
+      bgSpr.name = "bg";
+      app.stage.addChild(bgSpr);
+      //--------------------------------------添加图形------------------------
+      const borderline = new PIXI.Graphics();
+      borderline.lineStyle(1, 0xaaaaa, 0.5); //边框
+      // borderline.beginFill(0xffffff); //填充
+      borderline.drawRoundedRect(100, 300, 200, 200, 15);
+      // borderline.drawRect(0, 0, 200, 200, 15);
+      borderline.endFill();
+      app.stage.addChild(borderline);
+      //--------------------------------------添加文字------------------------
+      const msgStyle = {
+        fontSize:'100px',
+        fill:'#fff'
+      }
+      let message = new PIXI.Text('Hello llama',msgStyle)
+      message.position.set(100,300)
+      app.stage.addChild(message)
+    </script>
+  </body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>哈希表</title>
+</head>
+<body>
+<script>
+    /**
+     * 学到这里,已经感受到数据结构的一些复杂性
+     * 但是你如果仔细品味，你也会发现它在设计时候的巧妙和优点
+     * 当你感受到这一刻的时候，你才是真正的爱上编程
+     * 
+     * 采用链地址法实现 
+     * 
+     * 1.插入和修改数据，为什么放在一起讲呢？往哈希表里面放东西一般是放key和value，
+     * key最主要的是找到对应的位置，而这个value可能是我们真正要保存到数据
+     * 类似于我们之前讲到的员工姓名和员工信息，字典中的单词和单词解释
+     * 如果你按照这个方式插入，如果原来整个哈希表里面不存在key和对应的某一个value,那这个的话插入新数据key value
+     * 如果原来整个哈希表里面存在key和对应的某一个value，由于哈希表不允许key有重复，把我们原来value覆盖成最新插入的值
+     * 所以，插入和修改操作应该是同一个方法
+    */
+    // 创建HashTable构造函数
+    function HashTable() {
+        // 定义属性
+        this.storage = []  
+        this.count = 0   //当前哈希表存放的元素，通过当前存放的元素除以哈希表的总长度来获得加载因子loadFactor，来决定是否扩容[0.25,0.75]
+        this.limit = 8   //当前的哈希表总长度
+
+        // 定义相关方法
+        // 判断是否是质数
+        HashTable.prototype.isPrime = function (num) {
+            var temp = parseInt(Math.sqrt(num))
+            // 2.循环判断
+            for (var i = 2; i <= temp; i++) {
+                if (num % i == 0) {
+                    return false
+                }
+            }
+            return true
+        }
+
+        // 获取质数
+        HashTable.prototype.getPrime = function (num) {
+            while (!isPrime(num)) {
+                num++
+            }
+            return num
+        }
+
+        // 哈希函数
+        HashTable.prototype.hashFunc = function(str, max) {
+            // 1.初始化hashCode的值
+            var hashCode = 0
+
+            // 2.霍纳算法, 来计算hashCode的数值
+            for (var i = 0; i < str.length; i++) {
+                hashCode = 37 * hashCode + str.charCodeAt(i)
+            }
+
+            // 3.取模运算
+            hashCode = hashCode % max
+            return hashCode
+        }
+
+        // 插入数据方法：目的，将数据插入到对应的位置
+        HashTable.prototype.put = function (key, value) {
+            // 1.获取key对应的index  索引的一个转化
+            var index = this.hashFunc(key, this.limit)
+
+            // 2.取出数组(也可以使用链表)
+            // 数组中放置数据的方式: [[ [k,v], [k,v], [k,v] ] , [ [k,v], [k,v] ]  [ [k,v] ] ]
+            var bucket = this.storage[index]   // *根据索引值取出这个桶
+
+            // 3.判断这个数组 桶 是否存在
+            if (bucket === undefined) {
+                // 3.1创建桶 放在该索引的位置
+                bucket = []
+                this.storage[index] = bucket
+            }
+
+            // 4.判断是新增还是修改原来的值. 需要进行一个个遍历tuple元祖
+            var override = false
+            for (var i = 0; i < bucket.length; i++) {
+                var tuple = bucket[i]     //第一个桶  找到第一个桶数组取出数组元素i
+                if (tuple[0] === key) {   //判断这个tuple 0这个位置是否有key  有相同的一个key的话，在tuple 1 这个位置把value替换
+                    tuple[1] = value      
+                    override = true
+                }
+            }
+
+            // 5.如果是新增, 前一步没有覆盖，直接执行push方法  
+            if (!override) {
+                bucket.push([key, value])
+                this.count++
+
+                if (this.count > this.limit * 0.75) {
+                    var primeNum = this.getPrime(this.limit * 2)
+                    this.resize(primeNum)
+                }
+            }
+        }
+
+        // 获取  存放的数据
+        HashTable.prototype.get = function (key) {
+            // 1.获取key对应的index
+            var index = this.hashFunc(key, this.limit)
+
+            // 2.获取对应的bucket
+            var bucket = this.storage[index]
+
+            // 3.如果bucket为null, 那么说明这个位置没有数据
+            if (bucket == null) {
+                return null
+            }
+
+            // 4.有bucket, 判断是否有对应的key   线性查找bucket中的每一个key是否等于传入的key，如果等于直接返回value
+            for (var i = 0; i < bucket.length; i++) {
+                var tuple = bucket[i]
+                if (tuple[0] === key) {
+                    return tuple[1]
+                }
+            }
+
+            // 5.没有找到, return null   遍历完后，没有找到对应的key
+            return null
+        }
+
+        // 删除数据
+        HashTable.prototype.remove = function (key) {
+            // 1.获取key对应的index
+            var index = this.hashFunc(key, this.limit)
+
+            // 2.获取对应的bucket
+            var bucket = this.storage[index]
+
+            // 3.判断同是否为null, 为null则说明没有对应的数据
+            if (bucket == null) {
+                return null
+            }
+
+            // 4.遍历bucket, 寻找对应的数据
+            for (var i = 0; i < bucket.length; i++) {
+                var tuple = bucket[i]
+                if (tuple[0] === key) {
+                    bucket.splice(i, 1)
+                    this.count--
+
+                    // 缩小数组的容量
+                    if (this.limit > 7 && this.count < this.limit * 0.25) {
+                        var primeNum = this.getPrime(Math.floor(this.limit / 2))
+                        this.resize(primeNum)
+                    }
+                }
+                return tuple[1]
+            }
+
+            // 5.来到该位置, 说明没有对应的数据, 那么返回null
+            return null
+        }
+
+        // isEmpty方法
+        HashTable.prototype.isEmpty = function () {
+            return this.count == 0
+        }
+
+        // size方法
+        HashTable.prototype.size = function () {
+            return this.count
+        }
+
+        // 哈希表扩容
+        HashTable.prototype.resize = function (newLimit) {
+            // 1.保存旧的数组内容
+            var oldStorage = this.storage
+
+            // 2.重置属性
+            this.limit = newLimit
+            this.count = 0
+            this.storage = []
+
+            // 3.遍历旧数组中的所有数据项, 并且重新插入到哈希表中
+            oldStorage.forEach(function (bucket) {
+                // 1.bucket为null, 说明这里面没有数据
+                if (bucket == null) {
+                    return
+                }
+
+                // 2.bucket中有数据, 那么将里面的数据重新哈希化插入
+                for (var i = 0; i < bucket.length; i++) {
+                    var tuple = bucket[i]
+                    this.put(tuple[0], tuple[1])
+                }
+            }).bind(this)
+        }
+    }
+
+    // 测试哈希表
+    // 1.创建哈希表
+    var ht = new HashTable()
+
+    // 2.插入数据
+    ht.put("abc", "123")
+    ht.put("cba", "321")
+    ht.put("nba", "521")
+    ht.put("mba", "520")
+
+    // 3.获取数据
+    alert(ht.get("abc"))
+    ht.put("abc", "111")
+    alert(ht.get("abc"))
+
+    // 4.删除数据
+    alert(ht.remove("abc"))
+    alert(ht.get("abc"))
+
+    console.log(ht.storage)
+</script>
+<!--
+    1.为什么需要扩容
+    因为我们使用的是链地址法，loadFactor可以大于1，即桶里的数据项可以超过整个数组的长度，所以这个哈希表可以无限制的插入数据
+    但是随着数据量的增多，每一个index对应的桶会越来越长，桶里面的元素增删改查是一个线性查找的过程 也就造成效率降低
+    扩容的话可以简单的把容量扩大为2倍，，但是哈希表的长度是个质数分布的更加均匀一点，这里只是举例
+    如果你扩容，所有的数据项一定要同时进行比较(重新调用哈希函数，来获取到不同的位置)
+    这是一个耗时的过程，但是如果数组需要扩容，这个过程是必要的
+    2.什么情况下需要扩容
+    比较常见的情况是loadFactor>0.75来进行扩容
+
+-->
+</body>
+</html>

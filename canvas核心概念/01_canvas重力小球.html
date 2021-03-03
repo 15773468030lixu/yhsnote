@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01_canvas重力小球</title>
+  </head>
+  <!-- 一个效果就是小球出现在屏幕中间，在重力加速度的作用下，最后停止下来 -->
+  <body>
+    <canvas
+      id="myCanvas"
+      width="1600"
+      height="600"
+      style="border: 1px solid #000000"
+    >
+    </canvas>
+    <script>
+      // canvas有四个步骤：1 得到 2 获取上下文 3 填充样式 4 绘制图形
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      // 1
+      function Ball(x, y, dy, radius) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = getRandom();
+        // 设置行进方向
+        this.dy = dy;
+      }
+      //   2
+      Ball.prototype.update = function () {
+        //加速下降，直到落到地面，反向，并且反向的距离变短变化
+        if (this.y + this.radius + this.dy+ Gravity > canvas.height) {
+          // 落到地面的情况:保证决定百分百不超出下边界
+          this.dy = -this.dy;
+          // 速度越来越小
+          this.dy *= acceleration;
+        } else {
+          this.dy += Gravity;
+        }
+        this.y += this.dy; //每次向下(Math.random() - 0.5) * 20个像素
+        console.log("update");
+      };
+      //
+      //遍历每个小球调用小球自己的draw方法
+      Ball.prototype.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      };
+      // let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+      // let minRadius = 1;
+      // let maxRadius = 40;
+      let Gravity = 0.8;
+      let acceleration = 0.9
+      let ballArray = [];
+      for (let index = 0; index < 100; index++) {
+        let radius = Math.random() * 4 + 27;
+        ballArray.push(
+          new Ball(
+            // 让开始的时候就不要超过边界,活动范围 Math.random() * (canvas.width - 2 * radius) ，实际坐标保持 + radius
+            Math.random() * (canvas.width - 2 * radius) + radius,
+            Math.random() * (canvas.height - 2 * radius) + radius,
+            (Math.random() - 0.5) * 20,
+            radius
+          )
+        );
+      }
+      //   4
+      function animate() {
+        // if (this.r <= 0) return;
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //清除当前myCanvas画布大小
+        for (let ball of ballArray) {
+          ball.update(); //当前行进距离变化
+          ball.draw(); //开始路径闭合路径
+        }
+      }
+      animate();
+      function getRandom() {
+        var allType = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        var allTypeArr = allType.split(",");
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          // 获取下标值
+          var random = parseInt(Math.random() * allTypeArr.length);
+          //  拼接6个字
+          color += allTypeArr[random];
+        }
+        return color;
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02_pixijs_精灵组</title>
+  </head>
+  <link rel="stylesheet" href="./reset.css" />
+  <script src="pixi.min.js"></script>
+  <style type="text/css">
+    #stage canvas {
+      width: 100%;
+    }
+  </style>
+  <!-- PIXI.Container
+       2.children属性
+       3.parent属性
+       4.精灵组内精灵一起移动位置
+       5.精灵组内精灵一起缩放大小
+  -->
+  <body>
+    <!-- pixijs添加的所有元素都为精灵 -->
+    <div id="stage"></div>
+    <button id="scaleBtn">缩放</button>
+    <button id="removeBtn">移除</button>
+
+    <script type="text/javascript">
+      // 1
+      const app = new PIXI.Application({
+        width: 750,
+        height: 1334,
+        resolution: 1,
+      });
+      document.getElementById("stage").appendChild(app.view);
+      // 2
+      const bgSpr = new PIXI.Sprite.fromImage("./images/lunzi.png");
+      bgSpr.width = 750;
+      bgSpr.height = 1334;
+      bgSpr.position.set(0, 0);
+      bgSpr.name = "bg";
+      app.stage.addChild(bgSpr);
+      const petSpr1 = new PIXI.Sprite.fromImage("./images/sea-monster.svg");
+      // petSpr1.x = 450;
+      // petSpr1.y = 850;
+      petSpr1.width = 300;
+      petSpr1.height = 334;
+      petSpr1.anchor.x = 0.5;
+      petSpr1.anchor.y = 0.5;
+      petSpr1.name = "seamonster";
+      petSpr1.rotation = 15;
+      app.stage.addChild(petSpr1);
+      const petSpr2 = new PIXI.Sprite.fromImage("./images/dog.svg");
+      // petSpr2.x = 350;
+      // petSpr2.y = 900;
+      petSpr2.width = 300;
+      petSpr2.height = 334;
+      petSpr2.anchor.x = 0.5;
+      petSpr2.anchor.y = 0.5;
+      petSpr2.name = "dog";
+      app.stage.addChild(petSpr2);
+      document.getElementById("scaleBtn").onclick = function () {
+        petSpr2.scale.x = 0.9;
+        petSpr2.scale.y = 0.9;
+      };
+      // 精灵组
+      const petCon = new PIXI.Container();
+      // 以精灵组为基础再移动精灵本身的距离，会离开可视区域，所以需要删除精灵本身设置的距离
+      petCon.position.set(200, 900);
+      petCon.addChild(petSpr1);
+      petCon.addChild(petSpr2);
+      app.stage.addChild(petCon);
+
+      const petChildren = petCon.children;
+      console.log(petChildren.length);
+      console.log(petChildren[0].name);
+      console.log(petCon.getChildByName('dog'));
+      console.log(petCon.getChildAt(0));
+      console.log(petCon.getChildIndex(petSpr1));
+      console.log(petSpr1.getGlobalPosition());
+      document.getElementById("removeBtn").onclick = function () {
+        petCon.removeChild(petSpr2);
+      };
+    </script>
+  </body>
+</html>
+<!-- 
+  总结：
+  1.了解了PIXI的属性
+  宽高、位置、缩放、旋转、别名、隐显visible、是否可交换interactive、子元素、父元素
+  2.建立舞台建立精灵、精灵组，把精灵添加到舞台
+  addChild removeChild getChildAt getChildByName getChildIndex getGlobalPosition
+  3.绘制几何图形PIXI.Graphics  
+ -->

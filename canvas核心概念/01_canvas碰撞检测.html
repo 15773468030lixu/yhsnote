@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01_canvas碰撞检测</title>
+  </head>
+  <!-- 绘制无重叠的小球  复习物理知识  编写碰撞代码 -->
+  <body>
+    <canvas
+      id="myCanvas"
+      width="600"
+      height="600"
+      style="border: 1px solid #000000"
+    >
+    </canvas>
+    <script>
+      // canvas有四个步骤：1 得到 2 获取上下文 3 填充样式 4 绘制图形
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      function getDistance(x1, y1, x2, y2) {
+        let dx = x1 - x2;
+        let dy = y1 - y2;
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+      function getRandom() {
+        var allType = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        var allTypeArr = allType.split(",");
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          // 获取下标值
+          var random = parseInt(Math.random() * allTypeArr.length);
+          //  拼接6个字
+          color += allTypeArr[random];
+        }
+        return color;
+      }
+      // 1
+      function Particle(x, y, dx, dy, radius) {
+        this.x = x;
+        this.y = y;
+        this.mass = mass;
+        this.radius = radius;
+        this.color = getRandom();
+        // 设置行进方向
+        this.dx = dx;
+        this.dy = dy;
+      }
+      //   2
+      Particle.prototype.update = function () {
+        // 碰撞检测，需要给小球质量mass，每个小球都要检测是否发生碰撞
+        // if (
+        //   this.x + this.radius + this.dx > canvas.width ||
+        //   this.x - this.radius + this.dx < 0
+        // ) {
+        //   this.dx = -this.dx;
+        // }
+        // if (
+        //   this.y + this.radius + this.dy > canvas.width ||
+        //   this.y - this.radius + this.dy < 0
+        // ) {
+        //   this.dy = -this.dy;
+        // }
+        // this.x += this.dx;
+        // this.y += this.dy; //每次向下(Math.random() - 0.5) * 20个像素
+        // console.log("update");
+      };
+
+      //遍历生成的小球，判断他是否跟以前的有重叠，只有跟其中的一个有重叠，就重新生成一个随机的小球，直到新生成的小球和其他小球没有任何重叠为止
+      Particle.prototype.draw = function () {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+      };
+      let radius = Math.random() * 4 + 27;
+      let mass = radius * 0.5; //半径大，质量大
+      let ballArray = [];
+      for (let i = 0; i < 30; i++) {
+        let x = Math.random() * (canvas.width - 2 * radius) + radius;
+        let y = Math.random() * (canvas.height - 2 * radius) + radius;
+        for (let index = 0; index < ballArray.length; index++) {
+          // 防止初始化时粒子之间重叠
+          if (
+            getDistance(x, y, ballArray[index].x, ballArray[index].y) <=
+            radius + ballArray[index].radius
+          ) {
+            radius = Math.random() * 4 + 27;
+            x = Math.random() * (canvas.width - 2 * radius) + radius;
+            y = Math.random() * (canvas.height - 2 * radius) + radius;
+            index = -1;
+          }
+        }
+        ballArray.push(
+          new Particle(
+            // 让开始的时候就不要超过边界,活动范围 Math.random() * (canvas.width - 2 * radius) ，实际坐标保持 + radius
+            x,
+            y,
+            (Math.random() - 0.5) * 20,
+            (Math.random() - 0.5) * 20,
+            radius
+          )
+        );
+        // 这样初始的时候一个重叠都没有
+        // 能量守恒方程1/2mv2+1/2mv2=1/2mv2+1/2mv2
+        // 动量守恒：mv+mv=mv+mv
+        // ===> 小球a碰撞的速度  小球b碰撞的速度  意思是发送碰撞的时候,速度方向发生交换大小不变
+      }
+
+      function animate() {
+        // if (this.r <= 0) return;
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //清除当前myCanvas画布大小
+        for (let ball of ballArray) {
+          ball.update();   //当前行进距离变化
+          ball.draw();    //开始路径闭合路径
+        }
+      }
+      animate();
+    </script>
+  </body>
+</html>

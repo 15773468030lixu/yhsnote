@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02_pixijs_场景布置</title>
+  </head>
+  <link rel="stylesheet" href="./reset.css" />
+  <script src="pixi.min.js"></script>
+  <!-- 注意canvas设置的高度宽度和canvas样式的高度宽度是两个概念 -->
+  <style type="text/css">
+    #stage canvas {
+      /* 保持图片平铺在屏幕 */
+      width: 100%;
+    }
+  </style>
+  <body>
+    <!-- pixijs添加的所有元素都为精灵 -->
+    <div id="stage"></div>
+    <button id="scaleBtn">缩放</button>
+    <script type="text/javascript">
+      // 设置的舞台   注意canvas设置的高度宽度和canvas样式的高度宽度是两个概念
+      const app = new PIXI.Application({
+        // 从pixi.application查看文档
+        width: 750,
+        height: 1334,
+        resolution: 1,
+      });
+      document.getElementById("stage").appendChild(app.view);
+      // 如何添加精灵对象
+      const bgSpr = new PIXI.Sprite.fromImage("./images/lunzi.png");
+      bgSpr.width = 750;
+      bgSpr.height = 1334;
+      bgSpr.position.set(0, 0);
+      bgSpr.name = "bg";
+      // 把图片精灵添加到舞台
+      app.stage.addChild(bgSpr);
+      const petSpr = new PIXI.Sprite.fromImage("./images/dog.svg");
+      // 位置方法1
+      petSpr.x = 350;  
+      petSpr.y = 900;
+      // 位置方法2
+      //petSpr.position.set(200, 900);
+      petSpr.width = 300;
+      petSpr.height = 334;
+      // 百分比方法
+      petSpr.anchor.x = 0.5;
+      petSpr.anchor.y = 0.5;
+      // 具体的数值图片尺寸乘以0.5
+      // petSpr.privot.x = 300;
+      // petSpr.privot.y = 334;
+      // petSpr.name = "pet";
+      // 把图片精灵添加到舞台
+      petSpr.rotation = Math.PI;
+      app.stage.addChild(petSpr);
+      document.getElementById("scaleBtn").onclick = function () {
+        console.log("click");
+        //本身精灵缩放是左上角原点开始缩放，要想精灵本身的中心开始缩放要使用锚点完成：百分比方法、具体的数值
+        petSpr.scale.x = 0.9;
+        petSpr.scale.y = 0.9;
+      };
+      const borderline = new PIXI.Graphics();
+      borderline.lineStyle(1,0xaaaaa,0.5)  //边框
+      borderline.beginFill(0xffffff)  //填充
+    </script>
+  </body>
+</html>

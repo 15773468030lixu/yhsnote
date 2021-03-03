@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>02_优先级队列</title>
+</head>
+<body>
+<script>
+    // 封装优先级队列
+    function PriorityQueue() {
+         this.items = []
+
+        // 封装一个新的构造函数, 可以理解成内部类
+        // 用于保存元素和元素的优先级[以数字作为优先级]
+        // 每次创建的时候，传入element、priority数据项优先级保存起来
+        function QueueElement(element, priority) {
+            this.element = element
+            this.priority = priority
+        }
+
+        // 添加元素的方法
+        PriorityQueue.prototype.enqueue = function (element, priority) {
+            // let that = this
+            // 1.根据传入的元素, 创建新的QueueElement
+            var queueElement = new QueueElement(element, priority)
+            
+            // 2.获取传入元素应该在正确的位置
+            // 如果数组为空
+            if (this.items.length == 0) {
+                this.items.push(queueElement)
+            } else {
+                // 反之不为空
+                var added = false
+                for (var i = 0; i < this.items.length; i++) {
+                    // 注意: 我们这里是数字越小, 优先级越高
+                    // queueElement.priority比遍历的所有元素都要小，插入最前面
+                    if (queueElement.priority < this.items[i].priority) {
+                        // i位置插入元素，插入表0，并添加一个新元素来替代当初索引为i的位置的元素
+                        this.items.splice(i, 0, queueElement)
+                        // 我怎么知道我已经插入了？因为我要知道插入之后，没必要进行比较了
+                        added = true
+                        break
+                    }
+                }
+
+                // 遍历完所有的元素, 优先级都大于新插入的元素时, 就插入到最后
+                if (!added) {
+                    this.items.push(queueElement)
+                }
+            }
+        }
+
+        // 删除元素的方法
+        PriorityQueue.prototype.dequeue = function () {
+            return this.items.shift()
+        }
+
+        // 获取前端的元素
+        PriorityQueue.prototype.front = function () {
+            return this.items[0]
+        }
+
+        // 查看元素是否为空
+        PriorityQueue.prototype.isEmpty = function () {
+            return this.items.length == 0
+        }
+
+        // 获取元素的个数
+        PriorityQueue.prototype.size = function () {
+            return this.items.length
+        }
+    }
+
+    // 创建优先级队列对象
+    var pQueue = new PriorityQueue()
+
+    // 添加元素
+    pQueue.enqueue("abc", 10)
+    pQueue.enqueue("cba", 5)
+    pQueue.enqueue("nba", 12)
+    pQueue.enqueue("mba", 3)
+
+    // 遍历所有的元素
+    var size = pQueue.size()
+    for (var i = 0; i < size; i++) {
+        var item = pQueue.dequeue()
+        // alert自动调用了原型上的toString
+        alert(item.element + "-" + item.priority)
+    }
+</script>
+</body>
+</html>

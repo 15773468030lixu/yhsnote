@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>01_canvas画布案例</title>
+  </head>
+  <body>
+    <canvas
+      id="myCanvas"
+      width="600"
+      height="600"
+      style="border: 1px solid #000000"
+    >
+    </canvas>
+    <script>
+      // canvas有四个步骤：1 得到 2 获取上下文 3 填充样式 4 绘制图形
+      var canvas = document.getElementById("myCanvas");
+      var ctx = canvas.getContext("2d");
+      function Ball(x, y, r) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        this.color = getRandom();
+        // 设置行进方向
+        this.dx = parseInt(Math.random() * 10)-5;
+        // 设置行进方向
+        this.dy = parseInt(Math.random() * 10)-5;
+        // 讲这个小球维护到数组中this实例本身
+        BallArr.push(this);
+        if(this.r <= 0){
+            this.remove()
+        }
+      }
+      //  核心业务扔小球动起来
+      Ball.prototype.update = function () {
+        this.x += this.dx;
+        this.y += this.dy;
+        this.r -= 0.8;
+        if(this.r < 0){
+            console.log('shachu')
+            this.remove()
+        }
+      };
+      Ball.prototype.remove = function() {
+        // 检查有咩有触发
+        for (var i = 0; i < BallArr.length; i++) {
+            // 动画三操作
+          if(BallArr == this){
+            BallArr.splice(i)
+          }
+        }
+      };
+      Ball.prototype.render = function () {
+        // 检查有咩有触发
+        console.log("触发了");
+        // 鼠标监听移动的过程渲染
+        ctx.beginPath();
+        if(this.r <= 0) return
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = this.color;
+        console.log(this.x, this.y, this.color);
+
+        ctx.fill();
+      };
+      var BallArr = [];
+      canvas.addEventListener("mousemove", function (e) {
+        if(this.r <= 0) return
+        new Ball(e.offsetX, e.offsetY, 50);
+      });
+      setInterval(function () {
+        // console.log(BallArr);遍历这个小球
+        ctx.clearRect(0, 0, canvas.width, canvas.height); //清除当前myCanvas画布大小
+
+        for (var i = 0; i < BallArr.length; i++) {
+            // 动画三操作
+          BallArr[i].update();
+          if(BallArr[i]){
+            BallArr[i].render();
+          }
+        }
+      }, 30);
+      //随机颜色
+      function getRandom() {
+        var allType = "0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f";
+        var allTypeArr = allType.split(",");
+        console.log(allTypeArr);
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          // 获取下标值
+          var random = parseInt(Math.random() * allTypeArr.length);
+          //  拼接6个字
+          color += allTypeArr[random];
+        }
+        return color;
+      }
+      console.log(getRandom());
+    </script>
+  </body>
+</html>
+<!-- 
+      // var c=document.getElementById("myCanvas");
+      // var ctx=c.getContext("2d");
+      // function Rect(x,y,w,h,color){
+      //     this.x=x;
+      //     this.y=y;
+      //     this.w=w;
+      //     this.h=h;
+      //     this.color=color;
+      // };
+      // Rect.prototype.update=function(){
+      //         this.x++
+      // }
+      // Rect.prototype.render=function(){
+      //     ctx.fillStyle=this.color;
+      //     ctx.fillRect(this.x,this.y,this.w,this.h);
+      // }
+      // //实例化
+      // var r1 = new Rect(100,100,50,50,"purple")
+      // setInterval(function(){
+      // //0,0代表从什么位置开始清除， 画布的高度宽度
+      // ctx.clearRect(0,0,myCanvas.width,myCanvas.height);  //清除当前myCanvas画布大小
+      // r1.update()
+      // r1.render()
+      // },10)
+      //-------------------绘制不规则形状---------------
+      //   var c = document.getElementById("myCanvas");
+      //   var ctx = c.getContext("2d");
+      //   console.log(ctx);
+      //   //需要设置路径的起点，
+      //   ctx.beginPath();
+      //   //使用画图的命令、绘制命令，
+      //   ctx.moveTo(100, 100);
+      //   ctx.lineTo(200, 200);
+      //   ctx.lineTo(400, 180);
+      //   ctx.lineTo(380, 50);
+      //   //封闭路径
+      //   ctx.closePath();
+      //   //填充已经封闭路径的形状
+      //   ctx.strokeStyle = "#c000000";
+      //   ctx.stroke(); //绘制的边框颜色和绘制内容
+      //   ctx.fillStyle = "#FF0000";
+      //   ctx.fill();
+
+      //   var canvas = document.getElementById("myCanvas");
+      //   if (canvas.getContext) {
+      //     var ctx = canvas.getContext("2d");
+      //     //三次贝塞尔曲线
+      //     ctx.beginPath();
+      //     ctx.moveTo(75, 40);
+      //     ctx.bezierCurveTo(75, 37, 70, 25, 50, 25);
+      //     ctx.bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+      //     ctx.bezierCurveTo(20, 80, 40, 102, 75, 120);
+      //     ctx.bezierCurveTo(110, 102, 130, 80, 130, 62.5);
+      //     ctx.bezierCurveTo(130, 62.5, 130, 25, 100, 25);
+      //     ctx.bezierCurveTo(85, 25, 75, 37, 75, 40);
+      //     ctx.fillStyle = "purple";
+      //     ctx.fill();
+      //   }
+ -->
